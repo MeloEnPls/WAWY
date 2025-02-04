@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WAWY</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="img/2.png" />
+
+  <!-- Google Fonts : Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /******************************************************
+     * RESET & BASE
+     ******************************************************/
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    html {
+      scroll-behavior: smooth; /* scroll doux */
+    }
+    body {
+      background-color: #fff;
+      color: #000;
+      line-height: 1.5;
+      overflow-x: hidden; /* évite scrollbar horizontale */
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    /******************************************************
+     * VARIABLES
+     ******************************************************/
+    :root {
+      --yellow: #FFCE00; 
+      --black:  #000;
+      --gray-bg: #f5f5f5;
+      --text-light: #555;
+      --max-width: 1600px;
+
+      --ease-duration: 0.6s;
+      --ease-function: ease;
+
+      /* Tooltip colors */
+      --tooltip-bg: #000;
+      --tooltip-color: #fff;
+    }
+
+    /******************************************************
+     * .main-container
+     ******************************************************/
+    .main-container {
+      width: 90%;         
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    /******************************************************
+     * STICKY-CONTAINER pour Header + Barre
+     ******************************************************/
+    .sticky-container {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      background: #fff; /* on met le même fond que le header */
+    }
+
+    /******************************************************
+     * HEADER & NAV
+     ******************************************************/
+    header {
+      width: 100%;
+      height: 70px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    /* Logo pinned à gauche */
+    .logo {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .logo img {
+      width: 35px; 
+      height: 35px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    /* Menu centré */
+    nav {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav a:hover {
+      color: var(--yellow);
+    }
+    /* Burger (mobile) */
+    .menu-toggle {
+      display: none;
+    }
+
+    /******************************************************
+     * BARRE NOIRE (sticky avec le header)
+     ******************************************************/
+    .divider {
+      width: 100%;
+      height: 2px;
+      background: #000;
+    }
+
+    /******************************************************
+     * HERO
+     ******************************************************/
+    .hero {
+      background: var(--yellow);
+      text-align: center;
+      padding: 4rem 1rem; /* On pourra réduire sur grand écran via media query */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-content {
+      width: 90%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: 2.6rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    /* Typewriter effect */
+    .typewriter {
+      display: inline-block;
+      border-right: 2px solid #000;
+      padding-right: 6px;
+      animation: blink 0.8s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #000; }
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .btn-primary {
+      background: var(--black);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: background 0.3s;
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    /******************************************************
+     * H2 HOVER EFFECT (underline expands)
+     ******************************************************/
+    h2 {
+      font-size: 2rem;
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+    h2::after {
+      content: "";
+      display: block;
+      width: 50px; 
+      height: 3px;
+      background: var(--yellow);
+      margin: 0.5rem auto 0;
+      transition: width 0.3s ease;
+    }
+    h2:hover::after {
+      width: 120px; 
+    }
+
+    /******************************************************
+     * PORTFOLIO
+     ******************************************************/
+    .portfolio {
+      padding: 3rem 1rem; /* Réduit via media query sur large */
+      text-align: center;
+    }
+    .portfolio .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .slider-container {
+      position: relative;
+      max-width: 1000px; 
+      margin: 0 auto;
+    }
+    .slider-wrapper {
+      min-height: 350px;
+      position: relative;
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: block;
+      animation: fadeIn var(--ease-duration) var(--ease-function);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .slider-nav {
+      margin-top: 1.5rem;
+    }
+    .nav-btn {
+      background: var(--black);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin: 0 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .nav-btn:hover {
+      background: #333;
+    }
+
+    /******************************************************
+     * ABOUT US
+     ******************************************************/
+    .about {
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+    .about .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .about p {
+      max-width: 800px;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-top: 1rem;
+    }
+
+    /******************************************************
+     * SIMULATEUR DE DEVIS
+     ******************************************************/
+    .simulateur-devis {
+      padding: 3rem 1rem;
+      text-align: center;
+      background: var(--gray-bg);
+    }
+    .simulateur-container {
+      width: 90%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .simulateur-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; 
+      gap: 2rem;
+      align-items: start;
+      margin-top: 2rem;
+    }
+    @media (max-width: 768px) {
+      .simulateur-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sub-col, .offers-col {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: box-shadow 0.3s, transform 0.3s;
+      position: relative; 
+    }
+    .sub-col:hover, .offers-col:hover {
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      transform: scale(1.01);
+    }
+
+    .subscription-card, .option-card {
+      background: #fafafa;
+      border-radius: 6px;
+      padding: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .subscription-card:hover, .option-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Info icon en haut à droite */
+    .info-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      background: var(--black);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 20px;
+      cursor: pointer;
+    }
+    .info-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -10px);
+    }
+    .tooltip {
+      position: absolute;
+      left: 50%; 
+      top: -40%; 
+      transform: translate(-50%, 0);
+      background: var(--tooltip-bg);
+      color: var(--tooltip-color);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .subscription-card h4 {
+      margin-bottom: 0.5rem;
+    }
+    .subscription-card p,
+    .option-card p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-left: 25px; 
+    }
+
+    .option-card label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Totaux */
+    .quote-total {
+      margin-top: 2rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--yellow);
+    }
+    .devis-message {
+      margin-top: 1.5rem;
+    }
+    .btn-contact {
+      background: var(--black);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none;
+    }
+    .btn-contact:hover {
+      background: #333;
+    }
+
+    /******************************************************
+     * CONTACT
+     ******************************************************/
+    .contact {
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+    .contact .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .contact form {
+      max-width: 400px;
+      width: 100%;
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .contact input,
+    .contact textarea {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font: inherit;
+    }
+    .contact button {
+      background: var(--black);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .contact button:hover {
+      background: #333;
+    }
+
+    /******************************************************
+     * FOOTER
+     ******************************************************/
+    footer {
+      background: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--text-light);
+      border-top: 1px solid #eee;
+    }
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .social-links a {
+      color: #000;
+      width: 16px; 
+      height: 16px;
+      display: inline-flex;
+      transition: transform 0.3s, color 0.3s;
+    }
+    .social-links a:hover {
+      transform: scale(1.1);
+      color: var(--yellow);
+    }
+    .social-links svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /******************************************************
+     * ANIMATIONS AU SCROLL
+     ******************************************************/
+    .hidden {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity var(--ease-duration) var(--ease-function),
+                  transform var(--ease-duration) var(--ease-function);
+    }
+    .fade-in {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    /******************************************************
+     * RESPONSIVE : MOBILE
+     ******************************************************/
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        cursor: pointer;
+      }
+      nav {
+        display: none;
+      }
+      .menu-open nav {
+        display: block;
+        position: absolute;
+        top: 70px;
+        right: 10px;
+        background: #fff;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      nav ul {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .logo {
+        position: static;
+        transform: none;
+        margin-left: 1rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+
+    /******************************************************
+     * MEDIA QUERY POUR GRAND ÉCRAN : moins de vide
+     ******************************************************/
+    @media (min-width: 1400px) {
+      /* On réduit le padding vertical des sections */
+      .hero {
+        padding: 3rem 1rem;
+      }
+      .portfolio, .about, .simulateur-devis, .contact {
+        padding: 2rem 1rem;
+      }
+      /* On peut aussi baisser la taille de la barre noire, par ex. */
+      .divider {
+        height: 1px;
+      }
+      /* Ajuster la taille du h1, si besoin */
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY CONTAINER : header + divider -->
+  <div class="sticky-container">
+    <!-- HEADER sticky -->
+    <header id="header">
+      <div class="logo">
+        <a href="#hero"><img src="img/2.png" alt="W Icon"></a>
+      </div>
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
+      <nav>
+        <ul>
+          <li><a href="#hero">Accueil</a></li>
+          <li><a href="#portfolio">Nos projets</a></li>
+          <li><a href="#devis">Devis</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="divider"></div>
+  </div>
+
+  <!-- HERO (hidden, fade-in) -->
+  <section class="hero hidden" id="hero">
+    <div class="hero-content">
+       <h1>
+        WAWY
+       </h1>
+       <p>Chaque ligne compte.</p>
+       <h2>
+        <span id="typewriter" class="typewriter">Création de site Web</span>
+      </h2>
+      <p></p>
+      <a href="#portfolio" class="btn-primary">Voir nos projets</a>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO (hidden, fade-in) -->
+  <section class="portfolio hidden" id="portfolio">
+    <div class="main-container">
+      <h2>Nos projets</h2>
+      <div class="slider-container">
+        <div class="slider-wrapper" id="sliderWrapper">
+          <div class="slide active">
+            <img src="img/image.png" alt="Photo 1">
+          </div>
+          <div class="slide">
+            <img src="img/PortfolioProject.png" alt="Photo 2">
+          </div>
+          <div class="slide">
+            <img src="https://via.placeholder.com/600x350/333333/FFFFFF?text=Photo+3" alt="Photo 3">
+          </div>
+          <div class="slide">
+            <img src="img/image.png" alt="Projet Perso">
+          </div>
+        </div>
+        <div class="slider-nav">
+          <button class="nav-btn" id="prevBtn">&#8592;</button>
+          <button class="nav-btn" id="nextBtn">&#8594;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT (hidden, fade-in) -->
+  <section class="about hidden" id="about">
+    <div class="main-container">
+      <h2>À propos de nous</h2>
+      <p>
+        Nous créons des sites web à la fois élégants et performants, centrés sur l’expérience utilisateur.
+      </p>
+      <p style="margin-top:1rem;">
+        Avec WAWY, optez pour une approche globale et un service de qualité pour booster votre présence en ligne.
+      </p>
+    </div>
+  </section>
+
+  <!-- DEVIS (simulateur) (hidden, fade-in) -->
+  <section class="simulateur-devis hidden" id="devis">
+    <div class="simulateur-container">
+      <h2>Simulateur de Devis</h2>
+      <p>Choisissez votre formule d'abonnement et vos offres supplémentaires.</p>
+
+      <div class="simulateur-grid">
+        <div class="sub-col">
+          <h3>1. Choix de l'abonnement</h3>
+          <div class="subscription-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Forfait basique</span>
+            </div>
+            <label>
+              <input 
+                type="radio" 
+                name="abonnement" 
+                value="basique"
+                data-first="16.99"
+                data-monthly="16.99"
+              />
+              <h4>Basique</h4>
+              <p>1er mois : 16.99 € puis 16,99€/mois</p>
+            </label>
+          </div>
+          <div class="subscription-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Forfait pro</span>
+            </div>
+            <label>
+              <input 
+                type="radio" 
+                name="abonnement" 
+                value="pro"
+                data-first="760"
+                data-monthly="15.99"
+              />
+              <h4>Pro</h4>
+              <p>1er mois : 760€ puis 15,99€/mois</p>
+            </label>
+          </div>
+          <div class="subscription-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Forfait premium</span>
+            </div>
+            <label>
+              <input 
+                type="radio" 
+                name="abonnement" 
+                value="premium"
+                data-first="999"
+                data-monthly="29.99"
+              />
+              <h4>Premium</h4>
+              <p>1er mois : 999€ puis 29,99€/mois</p>
+            </label>
+          </div>
+        </div>
+
+        <div class="offers-col">
+          <h3>2. Offres supplémentaires</h3>
+          <div class="option-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Logo personnalisé</span>
+            </div>
+            <label>
+              <input class="option-checkbox" type="checkbox" data-price="50" />
+              Logo sur mesure (+50€)
+            </label>
+          </div>
+          <div class="option-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Référencement avancé</span>
+            </div>
+            <label>
+              <input class="option-checkbox" type="checkbox" data-price="80" />
+              SEO avancé (+80€)
+            </label>
+          </div>
+          <div class="option-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Hébergement stable 1an</span>
+            </div>
+            <label>
+              <input class="option-checkbox" type="checkbox" data-price="120" />
+              Hébergement 1 an (+120€)
+            </label>
+          </div>
+          <div class="option-card">
+            <div class="info-icon">
+              i
+              <span class="tooltip">Assistance technique</span>
+            </div>
+            <label>
+              <input class="option-checkbox" type="checkbox" data-price="30" />
+              Maintenance mensuelle (+30€)
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <p class="quote-total">
+        1er mois : <span id="quoteFirstMonth">0</span>€ 
+        <br>
+        Ensuite : <span id="quoteMonthly">0</span>€/mois
+      </p>
+      <div class="devis-message">
+        <a href="#contact" class="btn-contact">Envoyez-nous un message</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT (hidden, fade-in) -->
+  <section class="contact hidden" id="contact">
+    <div class="main-container">
+      <h2>Contact</h2>
+      <form action="#" method="POST">
+        <input type="text" name="nom" placeholder="Votre nom" required/>
+        <input type="email" name="email" placeholder="Votre email" required/>
+        <textarea name="message" placeholder="Votre message" required></textarea>
+        <button type="submit">Envoyer</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER (hidden, fade-in) -->
+  <footer class="hidden">
+    <p>&copy; 2025 WAWY. Tous droits réservés.</p>
+    <div class="social-links">
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 34 34" fill="currentColor">
+          <title>LinkedIn</title>
+          <path d="M34,2.5C34,1.1,32.9,0,31.5,0H2.5C1.1,0,0,1.1,0,2.5v29C0,32.9,1.1,34,2.5,34h29c1.4,0,2.5-1.1,2.5-2.5v-29
+          C34,1.1,32.9,0,31.5,0z M10.1,28H5.1V13.6h5V28z M7.6,12.1c-1.6,0-2.9-1.3-2.9-2.9S6,6.4,7.6,6.4c1.6,0,2.9,1.3,2.9,2.9
+          S9.2,12.1,7.6,12.1z M28,28h-5v-7.3c0-1.7,0-3.9-2.4-3.9c-2.4,0-2.8,1.8-2.8,3.8V28h-5V13.6h4.8v2h0.1c0.7-1.3,2.4-2.7,4.9-2.7
+          c5.2,0,6.2,3.4,6.2,7.7V28z"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    /********************************************************
+     * MENU RESPONSIVE
+     ********************************************************/
+    const menuToggle = document.getElementById('menuToggle');
+    const header = document.getElementById('header');
+    menuToggle.addEventListener('click', () => {
+      header.classList.toggle('menu-open');
+    });
+
+    /********************************************************
+     * TYPEWRITER (hero)
+     ********************************************************/
+    const typewriterSpan = document.getElementById('typewriter');
+    const texts = ["Conception Web", "Conception Graphique", "Hébergement"];
+    let textIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+    let currentText = texts[textIndex];
+
+    function typeEffect() {
+      if (!deleting) {
+        // Taper
+        typewriterSpan.textContent = currentText.slice(0, charIndex + 1);
+        charIndex++;
+        if (charIndex === currentText.length) {
+          setTimeout(() => { deleting = true; }, 1200);
+        }
+      } else {
+        // Effacer
+        typewriterSpan.textContent = currentText.slice(0, charIndex - 1);
+        charIndex--;
+        if (charIndex === 0) {
+          deleting = false;
+          textIndex = (textIndex + 1) % texts.length;
+          currentText = texts[textIndex];
+        }
+      }
+      const speed = deleting ? 50 : 80;
+      setTimeout(typeEffect, speed);
+    }
+    typeEffect();
+
+    /********************************************************
+     * SLIDER (Portfolio)
+     ********************************************************/
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      if (index < 0) {
+        currentSlide = slides.length - 1;
+      } else if (index >= slides.length) {
+        currentSlide = 0;
+      } else {
+        currentSlide = index;
+      }
+      slides.forEach((slide) => slide.classList.remove('active'));
+      slides[currentSlide].classList.add('active');
+    }
+
+    prevBtn.addEventListener('click', () => {
+      showSlide(currentSlide - 1);
+    });
+    nextBtn.addEventListener('click', () => {
+      showSlide(currentSlide + 1);
+    });
+    showSlide(currentSlide);
+
+    /********************************************************
+     * SIMULATEUR DE DEVIS
+     ********************************************************/
+    const subRadios = document.querySelectorAll('[name="abonnement"]');
+    const checkboxes = document.querySelectorAll('.option-checkbox');
+    const quoteFirstMonth = document.getElementById('quoteFirstMonth');
+    const quoteMonthly = document.getElementById('quoteMonthly');
+
+    function updateQuote() {
+      let firstMonthCost = 0;
+      let monthlyCost = 0;
+
+      subRadios.forEach(radio => {
+        if (radio.checked) {
+          firstMonthCost += parseInt(radio.dataset.first);
+          monthlyCost += parseFloat(radio.dataset.monthly);
+        }
+      });
+      checkboxes.forEach(chk => {
+        if (chk.checked) {
+          firstMonthCost += parseInt(chk.dataset.price);
+        }
+      });
+
+      quoteFirstMonth.textContent = firstMonthCost;
+      quoteMonthly.textContent = monthlyCost.toFixed(2);
+    }
+
+    subRadios.forEach(radio => {
+      radio.addEventListener('change', updateQuote);
+    });
+    checkboxes.forEach(chk => {
+      chk.addEventListener('change', updateQuote);
+    });
+    // Init
+    updateQuote();
+
+    /********************************************************
+     * ANIMATIONS AU SCROLL (IntersectionObserver)
+     ********************************************************/
+    const hiddenElements = document.querySelectorAll('.hidden');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    hiddenElements.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
