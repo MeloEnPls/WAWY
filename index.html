@@ -1,166 +1,257 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WAWY</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="img/2.png" />
 
-  <!-- Google Fonts : Montserrat -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <!-- Google Fonts : League Spartan -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet" />
 
   <style>
+    /* Activation du scroll-snap pour un défilement section par section */
+    html, body {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+
     /******************************************************
      * RESET & BASE
      ******************************************************/
-    * {
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box;
-      font-family: 'Montserrat', sans-serif;
-    }
-    html {
-      scroll-behavior: smooth; /* scroll doux */
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       background-color: #fff;
       color: #000;
       line-height: 1.5;
-      overflow-x: hidden; /* évite scrollbar horizontale */
+      overflow-x: hidden;
+      font-family: 'League Spartan', sans-serif;
+      font-size: 18px;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    ul {
-      list-style: none;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
 
     /******************************************************
      * VARIABLES
      ******************************************************/
     :root {
-      --yellow: #FFCE00; 
-      --black:  #000;
+      --yellow: #FFCE00;
+      --black: #000;
       --gray-bg: #f5f5f5;
       --text-light: #555;
       --max-width: 1600px;
-
-      --ease-duration: 0.6s;
+      --ease-duration: 0.3s;
       --ease-function: ease;
-
-      /* Tooltip colors */
-      --tooltip-bg: #000;
-      --tooltip-color: #fff;
     }
 
     /******************************************************
-     * .main-container
+     * MEDIA QUERIES POUR AGRANDIR LE TEXTE SUR GRANDS ÉCRANS
+     ******************************************************/
+    @media (min-width: 1024px) { body { font-size: 20px; } }
+    @media (min-width: 1440px) { body { font-size: 22px; } }
+
+    /******************************************************
+     * GLOBAL TITLES – h2 avec surlignement jaune
+     ******************************************************/
+    h2 {
+      display: inline-block;
+      position: relative;
+      margin-bottom: 1rem;
+      transition: transform var(--ease-duration);
+    }
+    h2::after {
+      content: "";
+      display: block;
+      height: 4px;
+      width: 60px;
+      background: var(--yellow);
+      margin: 0.5rem auto 0;
+      transition: width var(--ease-duration);
+    }
+    h2:hover::after { width: 100px; }
+
+    /******************************************************
+     * HEADER & NAVIGATION – Header fixé
+     ******************************************************/
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: #fff;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .logo { display: flex; align-items: center; }
+    .logo img {
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform var(--ease-duration);
+    }
+    .logo img:hover { transform: scale(1.1); }
+    /* Hotbar pour desktop */
+    .desktop-nav { display: none; }
+    @media (min-width: 769px) {
+      .desktop-nav {
+        display: block;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .desktop-nav ul { display: flex; gap: 1.5rem; }
+      .desktop-nav a {
+        transition: transform var(--ease-duration), color var(--ease-duration);
+      }
+      .desktop-nav a:hover {
+        color: var(--yellow);
+        transform: translateY(-5px);
+      }
+      /* Masquer le burger sur desktop */
+      .burger { display: none; }
+    }
+    /* Burger visible sur mobile */
+    .burger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 0.5rem;
+      transition: transform var(--ease-duration);
+    }
+    .burger:hover { transform: scale(1.1); }
+    .burger span {
+      width: 25px;
+      height: 3px;
+      background: var(--black);
+      transition: transform var(--ease-duration), opacity var(--ease-duration);
+    }
+    .burger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /******************************************************
+     * MENU MOBILE (Overlay)
+     ******************************************************/
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-nav.open { transform: translateY(0); }
+    .mobile-nav ul { text-align: center; }
+    .mobile-nav li { margin: 1rem 0; }
+    .mobile-nav a {
+      font-size: 2rem;
+      color: var(--black);
+      transition: transform var(--ease-duration), color var(--ease-duration);
+    }
+    .mobile-nav a:hover {
+      color: var(--yellow);
+      transform: translateX(5px);
+    }
+    .mobile-nav .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform var(--ease-duration);
+    }
+    .mobile-nav .close-btn:hover { transform: scale(1.1); }
+
+    /******************************************************
+     * MAIN CONTAINER
      ******************************************************/
     .main-container {
-      width: 90%;         
+      width: 90%;
       max-width: var(--max-width);
       margin: 0 auto;
     }
 
     /******************************************************
-     * STICKY-CONTAINER pour Header + Barre
+     * SECTIONS – style "page", espacées et avec scroll-snap
      ******************************************************/
-    .sticky-container {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      width: 100%;
-      background: #fff; /* on met le même fond que le header */
-    }
-
-    /******************************************************
-     * HEADER & NAV
-     ******************************************************/
-    header {
-      width: 100%;
-      height: 70px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    section {
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: background-color 0.3s;
+      scroll-snap-align: start;
+      scroll-margin-top: 90px;
+      margin-bottom: 6rem;
     }
-    /* Logo pinned à gauche */
-    .logo {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    .logo img {
-      width: 35px; 
-      height: 35px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    /* Menu centré */
-    nav {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-    nav ul {
-      display: flex;
-      gap: 1.5rem;
-    }
-    nav a:hover {
-      color: var(--yellow);
-    }
-    /* Burger (mobile) */
-    .menu-toggle {
-      display: none;
-    }
+    @media (min-width: 1024px) { section { padding: 1.5rem 1rem; } }
+    /* Supprime l'effet hover général pour éviter les changements indésirables */
+    section:hover { background-color: inherit; }
+    .hero { padding-top: 90px; }
 
     /******************************************************
-     * BARRE NOIRE (sticky avec le header)
-     ******************************************************/
-    .divider {
-      width: 100%;
-      height: 2px;
-      background: #000;
-    }
-
-    /******************************************************
-     * HERO
+     * HERO – Section d'introduction
      ******************************************************/
     .hero {
-      background: var(--yellow);
-      text-align: center;
-      padding: 4rem 1rem; /* On pourra réduire sur grand écran via media query */
+      background: linear-gradient(135deg, var(--yellow), #FFC107);
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
     }
     .hero-content {
       width: 90%;
       max-width: var(--max-width);
       margin: 0 auto;
+      animation: fadeIn 1.5s ease forwards;
     }
-    .hero h1 {
-      font-size: 2.6rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    /* Typewriter effect */
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 900;
+      margin-bottom: 0.2rem;
+      transition: transform var(--ease-duration);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .hero-title:hover { transform: translateY(-10px); }
+    .hero-slogan {
+      font-size: 1.5rem;
+      margin-top: 0.2rem;
+      margin-bottom: 2rem;
+      transition: transform var(--ease-duration);
+    }
+    .hero-slogan:hover { transform: translateX(5px); }
+    .typewriter-container { margin-bottom: 2rem; }
     .typewriter {
+      font-size: 1.5rem;
       display: inline-block;
       border-right: 2px solid #000;
       padding-right: 6px;
@@ -170,153 +261,167 @@
       0%, 100% { border-color: transparent; }
       50% { border-color: #000; }
     }
-
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-    }
     .btn-primary {
       background: var(--black);
       color: #fff;
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 2rem;
       border-radius: 5px;
       font-weight: 600;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.3s;
       display: inline-block;
+      font-size: 1.8rem;
     }
-    .btn-primary:hover {
-      background: #333;
-    }
+    .btn-primary:hover { background: #333; transform: scale(1.05); }
 
     /******************************************************
-     * H2 HOVER EFFECT (underline expands)
-     ******************************************************/
-    h2 {
-      font-size: 2rem;
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-    }
-    h2::after {
-      content: "";
-      display: block;
-      width: 50px; 
-      height: 3px;
-      background: var(--yellow);
-      margin: 0.5rem auto 0;
-      transition: width 0.3s ease;
-    }
-    h2:hover::after {
-      width: 120px; 
-    }
-
-    /******************************************************
-     * PORTFOLIO
+     * NOS PROJETS & À PROPOS – Anciennes sections "Nos projets" et "À propos de nous"
      ******************************************************/
     .portfolio {
-      padding: 3rem 1rem; /* Réduit via media query sur large */
+      background: #fff;
+      padding: 2rem 1rem;
+    }
+    .portfolio-content {
+      width: 90%;
+      max-width: var(--max-width);
+      margin: 0 auto;
       text-align: center;
     }
-    .portfolio .main-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    .portfolio-content h2 { margin-bottom: 1rem; }
+    .portfolio-content p { margin-bottom: 1rem; color: var(--text-light); }
     .slider-container {
       position: relative;
-      max-width: 1000px; 
+      width: 90%;
+      max-width: 1200px;
       margin: 0 auto;
+      overflow: hidden;
+      height: 90vh;
     }
+    @media (min-width: 1024px) { .slider-container { height: 100vh; } }
+    @media (max-width: 768px) { .slider-container { height: 350px; } }
     .slider-wrapper {
-      min-height: 350px;
       position: relative;
+      width: 100%;
+      height: 100%;
     }
     .slide {
       display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
     .slide.active {
       display: block;
       animation: fadeIn var(--ease-duration) var(--ease-function);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    .slider-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
     }
-    .slider-nav {
-      margin-top: 1.5rem;
-    }
-    .nav-btn {
-      background: var(--black);
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      margin: 0 0.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .nav-btn:hover {
-      background: #333;
-    }
-
-    /******************************************************
-     * ABOUT US
-     ******************************************************/
-    .about {
-      padding: 3rem 1rem;
-      text-align: center;
-    }
-    .about .main-container {
+    .slider-wrapper img:hover { transform: scale(1.05); }
+    /* Navigation par points positionnée en bas du slider */
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      gap: 8px;
     }
-    .about p {
-      max-width: 800px;
-      color: var(--text-light);
-      line-height: 1.6;
-      margin-top: 1rem;
+    .slider-dots .dot {
+      height: 16px;
+      width: 16px;
+      background-color: #bbb;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
     }
+    .slider-dots .dot:hover { transform: scale(1.2); }
+    .slider-dots .dot.active { background-color: var(--yellow); }
+
+    /* Section "À propos de nous" – contenu enrichi et agrandi */
+    .about {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eee;
+      transition: transform 0.3s;
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+    .about:hover { transform: translateY(-5px); }
+    .about img {
+      max-width: 600px;
+      width: 100%;
+      margin: 1rem auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .about p { margin-bottom: 1.2rem; }
+
+    /* Section "Notre équipe" – contenu enrichi et agrandi */
+    .team {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eee;
+      transition: transform 0.3s;
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+    .team:hover { transform: translateY(-5px); }
+    .team img {
+      max-width: 600px;
+      width: 100%;
+      margin: 1rem auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .team p { margin-bottom: 1.2rem; }
 
     /******************************************************
-     * SIMULATEUR DE DEVIS
+     * SIMULATEUR DE DEVIS – Texte simplifié, sans changement de fond au hover
      ******************************************************/
     .simulateur-devis {
-      padding: 3rem 1rem;
-      text-align: center;
       background: var(--gray-bg);
+      padding: 2rem 1rem;
     }
+    /* Désactivation de l'effet hover sur le fond pour cette section */
+    .simulateur-devis:hover { background: var(--gray-bg); }
     .simulateur-container {
       width: 90%;
       max-width: var(--max-width);
       margin: 0 auto;
+      text-align: center;
     }
+    .simulateur-container h2 { margin-bottom: 1rem; }
+    .simulateur-container p { margin-bottom: 1rem; color: var(--text-light); }
     .simulateur-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr; 
+      grid-template-columns: 1fr 1fr;
       gap: 2rem;
       align-items: start;
-      margin-top: 2rem;
+      margin-top: 1.5rem;
     }
-    @media (max-width: 768px) {
-      .simulateur-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    @media (max-width: 768px) { .simulateur-grid { grid-template-columns: 1fr; } }
     .sub-col, .offers-col {
       background: #fff;
       border: 1px solid #eee;
       border-radius: 8px;
-      padding: 1.5rem;
-      transition: box-shadow 0.3s, transform 0.3s;
-      position: relative; 
+      padding: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
     }
     .sub-col:hover, .offers-col:hover {
       box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-      transform: scale(1.01);
+      transform: scale(1.03);
     }
-
     .subscription-card, .option-card {
       background: #fafafa;
       border-radius: 6px;
@@ -326,11 +431,9 @@
       margin-bottom: 1rem;
     }
     .subscription-card:hover, .option-card:hover {
-      transform: scale(1.02);
+      transform: scale(1.03);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-
-    /* Info icon en haut à droite */
     .info-icon {
       position: absolute;
       top: 10px;
@@ -344,55 +447,50 @@
       text-align: center;
       line-height: 20px;
       cursor: pointer;
+      transition: transform 0.3s;
     }
-    .info-icon:hover .tooltip {
-      opacity: 1;
-      visibility: visible;
-      transform: translate(-50%, -10px);
-    }
+    .info-icon::before { content: "i"; font-weight: bold; }
+    .info-icon:hover { transform: scale(1.1); }
     .tooltip {
       position: absolute;
-      left: 50%; 
-      top: -40%; 
+      left: 50%;
+      top: -40%;
       transform: translate(-50%, 0);
-      background: var(--tooltip-bg);
-      color: var(--tooltip-color);
+      background: var(--black);
+      color: #fff;
       padding: 0.4rem 0.6rem;
       border-radius: 4px;
       font-size: 0.8rem;
       opacity: 0;
       visibility: hidden;
-      transition: 0.2s;
+      transition: opacity 0.2s;
       white-space: nowrap;
+      z-index: 1000;
     }
-
-    .subscription-card h4 {
-      margin-bottom: 0.5rem;
+    .info-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
     }
+    .subscription-card h4 { margin-bottom: 0.5rem; }
     .subscription-card p,
     .option-card p {
       color: var(--text-light);
       font-size: 0.9rem;
-      margin-left: 25px; 
+      margin-left: 25px;
     }
-
     .option-card label {
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-
-    /* Totaux */
     .quote-total {
       margin-top: 2rem;
       font-size: 1.6rem;
       font-weight: 700;
       color: var(--yellow);
     }
-    .devis-message {
-      margin-top: 1.5rem;
-    }
+    .devis-message { margin-top: 1.5rem; }
     .btn-contact {
       background: var(--black);
       color: #fff;
@@ -401,55 +499,59 @@
       border-radius: 4px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.3s;
       text-decoration: none;
     }
-    .btn-contact:hover {
-      background: #333;
-    }
+    .btn-contact:hover { background: #333; transform: scale(1.05); }
 
     /******************************************************
-     * CONTACT
+     * CONTACT – Section "Comment nous contacter" simplifiée
      ******************************************************/
     .contact {
-      padding: 3rem 1rem;
-      text-align: center;
+      background: #fff;
+      padding: 2rem 1rem;
     }
     .contact .main-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 2rem;
     }
-    .contact form {
-      max-width: 400px;
-      width: 100%;
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
+    .contact h2 { margin-bottom: 1rem; }
+    .contact p {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      transition: transform 0.3s;
     }
-    .contact input,
-    .contact textarea {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font: inherit;
+    .contact p:hover { transform: translateY(-5px); }
+    .contact-content {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .contact button {
-      background: var(--black);
-      color: #fff;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+    .contact-info {
+      flex: 1 1 300px;
+      text-align: left;
+      transition: transform 0.3s;
+    }
+    .contact-info p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .email-link {
+      font-size: 1.3rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
+      color: var(--yellow);
+      transition: color 0.3s, transform 0.3s;
     }
-    .contact button:hover {
-      background: #333;
+    .email-link:hover {
+      color: var(--black);
+      transform: scale(1.05);
     }
 
     /******************************************************
-     * FOOTER
+     * FOOTER – Footer positionné normalement
      ******************************************************/
     footer {
       background: #fff;
@@ -457,7 +559,9 @@
       text-align: center;
       color: var(--text-light);
       border-top: 1px solid #eee;
+      transition: transform 0.3s;
     }
+    footer:hover { transform: translateY(-5px); }
     .social-links {
       display: flex;
       gap: 1rem;
@@ -466,7 +570,7 @@
     }
     .social-links a {
       color: #000;
-      width: 16px; 
+      width: 16px;
       height: 16px;
       display: inline-flex;
       transition: transform 0.3s, color 0.3s;
@@ -475,10 +579,7 @@
       transform: scale(1.1);
       color: var(--yellow);
     }
-    .social-links svg {
-      width: 100%;
-      height: 100%;
-    }
+    .social-links svg { width: 100%; height: 100%; }
 
     /******************************************************
      * ANIMATIONS AU SCROLL
@@ -493,252 +594,181 @@
       opacity: 1 !important;
       transform: translateY(0) !important;
     }
-
-    /******************************************************
-     * RESPONSIVE : MOBILE
-     ******************************************************/
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: block;
-        font-size: 1.5rem;
-        margin-right: 1rem;
-        cursor: pointer;
-      }
-      nav {
-        display: none;
-      }
-      .menu-open nav {
-        display: block;
-        position: absolute;
-        top: 70px;
-        right: 10px;
-        background: #fff;
-        padding: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      nav ul {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .logo {
-        position: static;
-        transform: none;
-        margin-left: 1rem;
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
-    }
-
-    /******************************************************
-     * MEDIA QUERY POUR GRAND ÉCRAN : moins de vide
-     ******************************************************/
-    @media (min-width: 1400px) {
-      /* On réduit le padding vertical des sections */
-      .hero {
-        padding: 3rem 1rem;
-      }
-      .portfolio, .about, .simulateur-devis, .contact {
-        padding: 2rem 1rem;
-      }
-      /* On peut aussi baisser la taille de la barre noire, par ex. */
-      .divider {
-        height: 1px;
-      }
-      /* Ajuster la taille du h1, si besoin */
-      .hero h1 {
-        font-size: 2.4rem;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <!-- STICKY CONTAINER : header + divider -->
-  <div class="sticky-container">
-    <!-- HEADER sticky -->
-    <header id="header">
-      <div class="logo">
-        <a href="#hero"><img src="img/2.png" alt="W Icon"></a>
-      </div>
-      <div class="menu-toggle" id="menuToggle">&#9776;</div>
-      <nav>
-        <ul>
-          <li><a href="#hero">Accueil</a></li>
-          <li><a href="#portfolio">Nos projets</a></li>
-          <li><a href="#devis">Devis</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </header>
-    <div class="divider"></div>
-  </div>
-
-  <!-- HERO (hidden, fade-in) -->
-  <section class="hero hidden" id="hero">
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <a href="#hero"><img src="img/2.png" alt="W Icon"></a>
+    </div>
+    <!-- Hotbar pour desktop -->
+    <nav class="desktop-nav">
+      <ul>
+        <li><a href="#hero">Accueil</a></li>
+        <li><a href="#portfolio">Nos projets</a></li>
+        <li><a href="#devis">Devis</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <!-- Bouton burger pour mobile -->
+    <button class="burger" id="burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+  
+  <!-- MENU MOBILE (Overlay) -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="close-btn" id="closeBtn">&times;</button>
+    <ul>
+      <li><a href="#hero">Accueil</a></li>
+      <li><a href="#portfolio">Nos projets</a></li>
+      <li><a href="#devis">Devis</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  
+  <!-- HERO -->
+  <section class="hero" id="hero">
     <div class="hero-content">
-       <h1>
-        WAWY
-       </h1>
-       <p>Chaque ligne compte.</p>
-       <h2>
-        <span id="typewriter" class="typewriter">Création de site Web</span>
-      </h2>
-      <p></p>
+      <h1 class="hero-title">Wawy.</h1>
+      <p class="hero-slogan">Chaque ligne compte</p>
+      <div class="typewriter-container">
+        <h2><span id="typewriter" class="typewriter"></span></h2>
+      </div>
       <a href="#portfolio" class="btn-primary">Voir nos projets</a>
     </div>
   </section>
-
-  <!-- PORTFOLIO (hidden, fade-in) -->
+  
+  <!-- NOS PROJETS & À PROPOS DE NOUS -->
   <section class="portfolio hidden" id="portfolio">
-    <div class="main-container">
+    <div class="portfolio-content">
       <h2>Nos projets</h2>
+      <p>Découvrez nos réalisations et laissez-vous inspirer par notre savoir-faire.</p>
       <div class="slider-container">
         <div class="slider-wrapper" id="sliderWrapper">
           <div class="slide active">
-            <img src="img/image.png" alt="Photo 1">
+            <img src="img/image.png" alt="Projet 1">
           </div>
           <div class="slide">
-            <img src="img/PortfolioProject.png" alt="Photo 2">
+            <img src="img/PortfolioProject.png" alt="Projet 2">
           </div>
           <div class="slide">
-            <img src="https://via.placeholder.com/600x350/333333/FFFFFF?text=Photo+3" alt="Photo 3">
-          </div>
-          <div class="slide">
-            <img src="img/image.png" alt="Projet Perso">
+            <img src="img/image1.png" alt="Projet 3">
           </div>
         </div>
-        <div class="slider-nav">
-          <button class="nav-btn" id="prevBtn">&#8592;</button>
-          <button class="nav-btn" id="nextBtn">&#8594;</button>
-        </div>
+        <!-- Navigation par points -->
+        <div class="slider-dots" id="sliderDots"></div>
+      </div>
+      <!-- Section "À propos de nous" -->
+      <div class="about">
+        <h2>À propos de nous</h2>
+        <img src="https://via.placeholder.com/600x400?text=Image+Pro" alt="Image professionnelle">
+        <p>
+          Nous sommes spécialisés dans la création de sites web sur-mesure, alliant design moderne et technologies innovantes. Notre mission est de donner vie à vos projets digitaux et d'améliorer votre présence en ligne.
+        </p>
+        <p>
+          En travaillant en étroite collaboration avec nos clients, nous adaptons chaque solution à leurs besoins spécifiques pour offrir des résultats à la fois esthétiques et performants.
+        </p>
+      </div>
+      <!-- Section "Notre équipe" -->
+      <div class="team">
+        <h2>Notre équipe</h2>
+        <img src="https://via.placeholder.com/600x400?text=Notre+Equipe" alt="Notre équipe">
+        <p>
+          Composée de professionnels passionnés et créatifs, notre équipe met tout en œuvre pour transformer vos idées en une réalité numérique efficace.
+        </p>
+        <p>
+          Nous combinons expertise technique et sensibilité artistique pour vous proposer des solutions innovantes, adaptées à l'évolution constante du monde digital.
+        </p>
       </div>
     </div>
   </section>
-
-  <!-- ABOUT (hidden, fade-in) -->
-  <section class="about hidden" id="about">
-    <div class="main-container">
-      <h2>À propos de nous</h2>
-      <p>
-        Nous créons des sites web à la fois élégants et performants, centrés sur l’expérience utilisateur.
-      </p>
-      <p style="margin-top:1rem;">
-        Avec WAWY, optez pour une approche globale et un service de qualité pour booster votre présence en ligne.
-      </p>
-    </div>
-  </section>
-
-  <!-- DEVIS (simulateur) (hidden, fade-in) -->
+  
+  <!-- DEVIS -->
   <section class="simulateur-devis hidden" id="devis">
     <div class="simulateur-container">
       <h2>Simulateur de Devis</h2>
-      <p>Choisissez votre formule d'abonnement et vos offres supplémentaires.</p>
-
+      <p>Choisissez votre formule d'abonnement pour estimer votre devis.</p>
       <div class="simulateur-grid">
         <div class="sub-col">
           <h3>1. Choix de l'abonnement</h3>
           <div class="subscription-card">
             <div class="info-icon">
-              i
-              <span class="tooltip">Forfait basique</span>
+              <span class="tooltip">Hébergement web + Nom de domaine en "nom".wawy.fr</span>
             </div>
             <label>
-              <input 
-                type="radio" 
-                name="abonnement" 
-                value="basique"
-                data-first="16.99"
-                data-monthly="16.99"
-              />
-              <h4>Basique</h4>
-              <p>1er mois : 16.99 € puis 16,99€/mois</p>
+              <input type="radio" name="abonnement" value="basique" data-first="16.99" data-monthly="16.99" />
+              <h4>Pro</h4>
+              <p>16.99€</p>
             </label>
           </div>
           <div class="subscription-card">
             <div class="info-icon">
-              i
               <span class="tooltip">Forfait pro</span>
             </div>
             <label>
-              <input 
-                type="radio" 
-                name="abonnement" 
-                value="pro"
-                data-first="760"
-                data-monthly="15.99"
-              />
-              <h4>Pro</h4>
-              <p>1er mois : 760€ puis 15,99€/mois</p>
+              <input type="radio" name="abonnement" value="pro" data-first="19.99" data-monthly="19.99" />
+              <h4>Pro +</h4>
+              <p>19.99€/mois</p>
             </label>
           </div>
           <div class="subscription-card">
             <div class="info-icon">
-              i
-              <span class="tooltip">Forfait premium</span>
+              <span class="tooltip">Nom de domaine personnalisée + Boîte mail</span>
             </div>
             <label>
-              <input 
-                type="radio" 
-                name="abonnement" 
-                value="premium"
-                data-first="999"
-                data-monthly="29.99"
-              />
+              <input type="radio" name="abonnement" value="premium" data-first="24.99" data-monthly="24.99" />
               <h4>Premium</h4>
-              <p>1er mois : 999€ puis 29,99€/mois</p>
+              <p>24,99€/mois</p>
             </label>
           </div>
         </div>
-
         <div class="offers-col">
           <h3>2. Offres supplémentaires</h3>
           <div class="option-card">
             <div class="info-icon">
-              i
-              <span class="tooltip">Logo personnalisé</span>
+              <span class="tooltip">Logo sur mesure, flyers, grille tarifiaire, etc.</span>
             </div>
             <label>
-              <input class="option-checkbox" type="checkbox" data-price="50" />
-              Logo sur mesure (+50€)
+              <input class="option-checkbox" type="checkbox" data-price="200" />
+              Refonte graphique (200€)
             </label>
           </div>
           <div class="option-card">
             <div class="info-icon">
-              i
-              <span class="tooltip">Référencement avancé</span>
+              <span class="tooltip">Site animé utilisant JS, CSS et HTML</span>
             </div>
             <label>
-              <input class="option-checkbox" type="checkbox" data-price="80" />
-              SEO avancé (+80€)
+              <input class="option-checkbox" type="checkbox" data-price="500" />
+              Création de site (500€)
             </label>
           </div>
           <div class="option-card">
             <div class="info-icon">
-              i
-              <span class="tooltip">Hébergement stable 1an</span>
+              <span class="tooltip">Formation cybersécurité</span>
             </div>
             <label>
-              <input class="option-checkbox" type="checkbox" data-price="120" />
-              Hébergement 1 an (+120€)
+              <input class="option-checkbox" type="checkbox" data-price="20" />
+              Formation cybersécurité (20€)
             </label>
           </div>
-          <div class="option-card">
+          <div class="option-card" style="margin-top: 1.5rem;">
             <div class="info-icon">
-              i
-              <span class="tooltip">Assistance technique</span>
+              <span class="tooltip">Aide aux utilisateurs</span>
             </div>
             <label>
-              <input class="option-checkbox" type="checkbox" data-price="30" />
-              Maintenance mensuelle (+30€)
+              <input class="option-checkbox" type="checkbox" data-price="400" />
+              Assistance en cas de problème (+400€)
             </label>
           </div>
         </div>
       </div>
-
       <p class="quote-total">
-        1er mois : <span id="quoteFirstMonth">0</span>€ 
-        <br>
+        1er mois : <span id="quoteFirstMonth">0</span>€<br>
         Ensuite : <span id="quoteMonthly">0</span>€/mois
       </p>
       <div class="devis-message">
@@ -746,21 +776,23 @@
       </div>
     </div>
   </section>
-
-  <!-- CONTACT (hidden, fade-in) -->
+  
+  <!-- CONTACT – Section "Comment nous contacter" simplifiée -->
   <section class="contact hidden" id="contact">
     <div class="main-container">
-      <h2>Contact</h2>
-      <form action="#" method="POST">
-        <input type="text" name="nom" placeholder="Votre nom" required/>
-        <input type="email" name="email" placeholder="Votre email" required/>
-        <textarea name="message" placeholder="Votre message" required></textarea>
-        <button type="submit">Envoyer</button>
-      </form>
+      <h2>Contactez-nous</h2>
+      <p>Pour toute demande de devis ou question, n'hésitez pas à nous contacter par les moyens ci-dessous :</p>
+      <div class="contact-content">
+        <div class="contact-info">
+          <p><strong>Email :</strong> <a href="mailto:contact@wawy.com" class="email-link">contact@wawy.com</a></p>
+          <p><strong>Téléphone :</strong> Undefined</p>
+          <p><strong>Adresse :</strong> Montbéliard</p>
+        </div>
+      </div>
     </div>
   </section>
-
-  <!-- FOOTER (hidden, fade-in) -->
+  
+  <!-- FOOTER – Footer positionné normalement -->
   <footer class="hidden">
     <p>&copy; 2025 WAWY. Tous droits réservés.</p>
     <div class="social-links">
@@ -775,37 +807,39 @@
       </a>
     </div>
   </footer>
-
+  
   <script>
-    /********************************************************
-     * MENU RESPONSIVE
-     ********************************************************/
-    const menuToggle = document.getElementById('menuToggle');
-    const header = document.getElementById('header');
-    menuToggle.addEventListener('click', () => {
-      header.classList.toggle('menu-open');
+    // MENU BURGER
+    const burger = document.getElementById('burger');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeBtn');
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('open');
+      mobileNav.classList.toggle('open');
+    });
+    closeBtn.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    });
+    document.querySelectorAll('.mobile-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        burger.classList.remove('open');
+        mobileNav.classList.remove('open');
+      });
     });
 
-    /********************************************************
-     * TYPEWRITER (hero)
-     ********************************************************/
+    // TYPEWRITER
     const typewriterSpan = document.getElementById('typewriter');
-    const texts = ["Conception Web", "Conception Graphique", "Hébergement"];
-    let textIndex = 0;
-    let charIndex = 0;
-    let deleting = false;
-    let currentText = texts[textIndex];
-
+    const texts = ["Compétence Web", "Hébergement", "Référencement"];
+    let textIndex = 0, charIndex = 0, deleting = false, currentText = texts[textIndex];
     function typeEffect() {
       if (!deleting) {
-        // Taper
         typewriterSpan.textContent = currentText.slice(0, charIndex + 1);
         charIndex++;
         if (charIndex === currentText.length) {
           setTimeout(() => { deleting = true; }, 1200);
         }
       } else {
-        // Effacer
         typewriterSpan.textContent = currentText.slice(0, charIndex - 1);
         charIndex--;
         if (charIndex === 0) {
@@ -819,75 +853,58 @@
     }
     typeEffect();
 
-    /********************************************************
-     * SLIDER (Portfolio)
-     ********************************************************/
+    // SLIDER (carousel) – navigation par points
     const slides = document.querySelectorAll('.slide');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    const sliderDots = document.getElementById('sliderDots');
     let currentSlide = 0;
-
-    function showSlide(index) {
-      if (index < 0) {
-        currentSlide = slides.length - 1;
-      } else if (index >= slides.length) {
-        currentSlide = 0;
-      } else {
-        currentSlide = index;
-      }
-      slides.forEach((slide) => slide.classList.remove('active'));
-      slides[currentSlide].classList.add('active');
+    slides.forEach((slide, index) => {
+      const dot = document.createElement('span');
+      dot.classList.add('dot');
+      if (index === currentSlide) dot.classList.add('active');
+      dot.addEventListener('click', () => showSlide(index));
+      sliderDots.appendChild(dot);
+    });
+    function updateDots() {
+      document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
     }
-
-    prevBtn.addEventListener('click', () => {
-      showSlide(currentSlide - 1);
-    });
-    nextBtn.addEventListener('click', () => {
-      showSlide(currentSlide + 1);
-    });
+    function showSlide(index) {
+      if (index < 0) { currentSlide = slides.length - 1; }
+      else if (index >= slides.length) { currentSlide = 0; }
+      else { currentSlide = index; }
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[currentSlide].classList.add('active');
+      updateDots();
+    }
+    setInterval(() => showSlide(currentSlide + 1), 5000);
     showSlide(currentSlide);
 
-    /********************************************************
-     * SIMULATEUR DE DEVIS
-     ********************************************************/
+    // SIMULATEUR DE DEVIS
     const subRadios = document.querySelectorAll('[name="abonnement"]');
     const checkboxes = document.querySelectorAll('.option-checkbox');
     const quoteFirstMonth = document.getElementById('quoteFirstMonth');
     const quoteMonthly = document.getElementById('quoteMonthly');
-
     function updateQuote() {
-      let firstMonthCost = 0;
-      let monthlyCost = 0;
-
+      let firstMonthCost = 0, monthlyCost = 0;
       subRadios.forEach(radio => {
         if (radio.checked) {
-          firstMonthCost += parseInt(radio.dataset.first);
+          firstMonthCost += parseFloat(radio.dataset.first);
           monthlyCost += parseFloat(radio.dataset.monthly);
         }
       });
       checkboxes.forEach(chk => {
-        if (chk.checked) {
-          firstMonthCost += parseInt(chk.dataset.price);
-        }
+        if (chk.checked) { firstMonthCost += parseFloat(chk.dataset.price); }
       });
-
-      quoteFirstMonth.textContent = firstMonthCost;
+      quoteFirstMonth.textContent = firstMonthCost.toFixed(2);
       quoteMonthly.textContent = monthlyCost.toFixed(2);
     }
-
-    subRadios.forEach(radio => {
-      radio.addEventListener('change', updateQuote);
-    });
-    checkboxes.forEach(chk => {
-      chk.addEventListener('change', updateQuote);
-    });
-    // Init
+    subRadios.forEach(radio => radio.addEventListener('change', updateQuote));
+    checkboxes.forEach(chk => chk.addEventListener('change', updateQuote));
     updateQuote();
 
-    /********************************************************
-     * ANIMATIONS AU SCROLL (IntersectionObserver)
-     ********************************************************/
-    const hiddenElements = document.querySelectorAll('.hidden');
+    // ANIMATIONS AU SCROLL (IntersectionObserver)
+    const hiddenElements = document.querySelectorAll('.hidden:not(.mobile-nav)');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -895,10 +912,7 @@
           observer.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.1
-    });
-
+    }, { threshold: 0.2 });
     hiddenElements.forEach(el => observer.observe(el));
   </script>
 </body>
