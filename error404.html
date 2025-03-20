@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erreur 404 - WAWY</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="img/2.png" />
+  
+  <!-- Google Fonts : League Spartan -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* Styles de base inspirés du site WAWY */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'League Spartan', sans-serif;
+      background-color: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+    .logo img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      transition: transform 0.3s;
+    }
+    .logo img:hover {
+      transform: scale(1.1);
+    }
+    h1 {
+      font-size: 6rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    a.btn-primary {
+      background: #000;
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s;
+    }
+    a.btn-primary:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo avec redirection vers la page d'accueil -->
+  <div class="logo">
+    <a href="index.html">
+      <img src="img/2.png" alt="Logo WAWY">
+    </a>
+  </div>
+  
+  <!-- Message d'erreur 404 -->
+  <h1>Erreur 404</h1>
+  <p>Désolé, la page que vous recherchez n'existe pas.</p>
+  
+  <!-- Bouton de retour à l'accueil -->
+  <a href="index.html" class="btn-primary">Retour à l'accueil</a>
+</body>
+</html>
